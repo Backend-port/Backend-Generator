@@ -3,172 +3,230 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Generator JSON Image-to-Prompt</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        padding: 20px;
-        background-color: #f4f4f9;
-        color: #333;
-      }
-      .container {
-        max-width: 600px;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        text-align: center;
-        color: #6a0dad;
-      }
-      .section {
-        margin-bottom: 20px;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-      }
-      #image-preview {
-        max-width: 100%;
-        height: auto;
-        margin: 15px 0;
-        border-radius: 4px;
-        display: none;
-      }
-      .button {
-        background-color: #6a0dad;
-        color: white;
-        padding: 12px 15px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 10px;
-        width: 100%;
-        font-size: 16px;
-        transition: background-color 0.3s;
-      }
-      .button:hover {
-        background-color: #51008a;
-      }
-      #json-output {
-        white-space: pre-wrap;
-        background-color: #282c34;
-        color: #61dafb;
-        padding: 15px;
-        border-radius: 6px;
-        min-height: 120px;
-        overflow: auto;
-        font-size: 14px;
-      }
-      .status-message {
-        color: #d9534f;
-        font-weight: bold;
-        margin-top: 10px;
-        text-align: center;
-      }
-      .success {
-        color: #5cb85c;
-      }
+    <title>Backend Generator</title>
+<style>
+  /* Gaya Dasar Dark Mode */
+  body {
+    font-family: sans-serif;
+    padding: 0;
+    margin: 0;
+    background-color: #121620; /* Latar Belakang Biru Tua Gelap */
+    color: #f0f0f0; /* Warna Teks Cerah */
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #121620;
+    padding: 20px;
+    box-sizing: border-box;
+  }
 
-      /* Gaya untuk FAQ */
-      .faq-container {
-        margin-top: 30px;
-        padding: 15px;
-        border-top: 1px solid #ddd;
-      }
-      .faq-container h2 {
-        color: #6a0dad;
-        font-size: 20px;
-        margin-bottom: 15px;
-        text-align: center;
-      }
-      .faq-item {
-        border: 1px solid #eee;
-        margin-bottom: 10px;
-        border-radius: 6px;
-        background-color: #fff;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      }
-      .faq-item summary {
-        padding: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        outline: none;
-        display: block;
-      }
-      .faq-item summary::marker {
-        content: "";
-      }
-      .faq-item summary::after {
-        content: "˅";
-        float: right;
-        font-size: 1.2em;
-        transition: transform 0.3s;
-      }
-      .faq-item[open] summary::after {
-        content: "˄";
-      }
-      .faq-content {
-        padding: 10px 15px 15px 15px;
-        border-top: 1px solid #eee;
-        background-color: #f9f9f9;
-        font-size: 14px;
-        color: #555;
-      }
-    </style>
-  </head>
+  /* Gaya Header */
+  .header {
+    text-align: center;
+    padding: 30px 0 20px 0;
+  }
+  .header h1 {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #f0f0f0;
+  }
+  .header h2 {
+    font-size: 1.2em;
+    color: #4dc2ff; /* Warna Biru Muda untuk Subtitle */
+    margin-top: 0;
+    margin-bottom: 25px;
+  }
+
+  /* Gaya Ikon Sosial Media */
+  .social-icons a {
+    margin: 0 10px;
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+  .social-icons a:hover {
+    transform: scale(1.1);
+  }
+  .social-icons img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }
+
+  /* Gaya Kotak Unggah Gambar */
+  #upload-box {
+    margin-top: 30px;
+    padding: 40px 20px;
+    border: 3px dashed #34495e; /* Garis putus-putus seperti di gambar */
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #1f2533; /* Kotak unggah sedikit lebih terang */
+    transition: background-color 0.2s;
+  }
+  #upload-box:hover {
+    background-color: #242c3d;
+  }
+  #upload-box .icon {
+    font-size: 3em;
+    color: #4dc2ff;
+    margin-bottom: 10px;
+  }
+  #upload-box p {
+    margin: 0;
+    font-size: 1.1em;
+    color: #b0c4de;
+  }
+  
+  /* Sisanya adalah gaya untuk output JSON dan FAQ */
+  .section { /* Gaya dasar kotak lain (output, dll) */
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #34495e;
+    border-radius: 8px;
+    background-color: #1f2533; 
+    color: #f0f0f0;
+  }
+  .button {
+    background-color: #6a0dad; /* Warna tombol ungu */
+    color: white;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  .button:hover {
+    background-color: #51008a;
+  }
+  #json-output {
+    white-space: pre-wrap;
+    background-color: #0d1017; /* Kotak output lebih gelap */
+    color: #00ffaa; /* Teks output hijau neon */
+    padding: 15px;
+    border-radius: 6px;
+    min-height: 120px;
+    overflow: auto;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .status-message {
+    color: #ff6347;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+  }
+  .success {
+    color: #3cb371;
+  }
+  /* Gaya untuk FAQ (pertahankan gaya dark mode) */
+  .faq-container {
+    margin-top: 30px;
+    padding: 15px;
+    border-top: 1px solid #34495e;
+  }
+  .faq-container h2 {
+    color: #4dc2ff;
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  .faq-item {
+    border: 1px solid #34495e;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    background-color: #1a1f2c;
+  }
+  .faq-item summary {
+    padding: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    display: block;
+    color: #f0f0f0;
+  }
+  .faq-item summary::after {
+    content: "˅";
+    float: right;
+    font-size: 1.2em;
+    transition: transform 0.3s;
+  }
+  .faq-item[open] summary::after {
+    content: "˄";
+  }
+  .faq-content {
+    padding: 10px 15px 15px 15px;
+    border-top: 1px solid #34495e;
+    background-color: #151924;
+    font-size: 14px;
+    color: #b0c4de;
+  }
+</style>
+</head>
   <body>
     <div class="container">
-      <h1>Backend Image Generator</h1>
+      
+      <div class="header">
+        <h1>BACKEND GENERATOR</h1>
+        <h2>Image Prompt Generator</h2>
+        
+        <div class="social-icons">
+          <a href="https://whatsapp.com/channel/0029Vb6C0bRBKfi8cD3jBh1z" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+          </a>
+          <a href="https://www.threads.com/@b.a.c.k_e.n.d" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Threads-Instagram_combined_logo.svg" alt="Instagram">
+          </a>
+          <a href="https://tiktok.com/@b.a.c._a.n.d" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg" alt="TikTok">
+          </a>
+        </div>
+      </div>
 
-      <div class="section">
-        <h2>1. Unggah Gambar & Opsi Output</h2>
-        <input type="file" id="imageFile" accept="image/*" />
-        <img id="image-preview" alt="Pratinjau Gambar" />
+      <input type="file" id="imageFile" accept="image/*" style="display: none;" />
+      
+      <div id="upload-box" onclick="document.getElementById('imageFile').click()">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#4dc2ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 12.00001A5 5 0 0 0 18 10.00001V9.00001A7 7 0 0 0 4 9.00001A5 5 0 0 0 3.12 12.00001"></path></svg>
+        </div>
+        <p>Klik untuk mengunggah gambar</p>
+      </div>
+      
+      <img id="image-preview" alt="Pratinjau Gambar" style="margin-top: 20px; width: 100%; display: none;" />
 
-        <div style="margin-top: 10px">
+
+      <div class="section" style="margin-top: 20px;">
+        <h2>Opsi Output</h2>
+        
+        <div style="margin-top: 10px;">
           <h3>Pilih Rasio Gambar</h3>
-          <select
-            id="ratioSelect"
-            style="
-              width: 100%;
-              padding: 10px;
-              border: 1px solid #ddd;
-              border-radius: 4px;
-            "
-          >
-            <option value="9:16" selected>9:16 (Potret Penuh) - Default</option>
-            <option value="1:1">1:1 (Persegi)</option>
-            <option value="16:9">16:9 (Lanskap)</option>
-            <option value="4:5">4:5 (Potret)</option>
+          <select id="ratioSelect" style="width: 100%; padding: 10px; border: 1px solid #34495e; border-radius: 4px; background-color: #1a1f2c; color: #f0f0f0;">
+              <option value="9:16" selected>9:16 (Potret Penuh) - Default</option> 
+              <option value="1:1">1:1 (Persegi)</option> 
+              <option value="16:9">16:9 (Lanskap)</option>
+              <option value="4:5">4:5 (Potret)</option>
           </select>
         </div>
 
-        <div style="margin-top: 15px">
-          <h3>Mode Output</h3>
-          <select
-            id="languageSelect"
-            style="
-              width: 100%;
-              padding: 10px;
-              border: 1px solid #ddd;
-              border-radius: 4px;
-            "
-          >
-            <option value="JSON-ID" selected>JSON (Bahasa Indonesia)</option>
-            <option value="JSON-EN">JSON (English)</option>
-            <option value="EN-RAW">Prompt Saja (English)</option>
-            <option value="ID-RAW">Prompt Saja (Bahasa Indonesia)</option>
-          </select>
+        <div style="margin-top: 15px;">
+            <h3>Mode Output</h3>
+            <select id="languageSelect" style="width: 100%; padding: 10px; border: 1px solid #34495e; border-radius: 4px; background-color: #1a1f2c; color: #f0f0f0;">
+                <option value="JSON-ID" selected>JSON (Bahasa Indonesia)</option>
+                <option value="JSON-EN">JSON (English)</option>
+                <option value="EN-RAW">Prompt Saja (English)</option>
+                <option value="ID-RAW">Prompt Saja (Bahasa Indonesia)</option>
+            </select>
         </div>
-
+        
         <button class="button" onclick="analyzeImage()">
           Analisis Gambar & Buat Deskripsi Dasar
         </button>
         <div id="status-message" class="status-message"></div>
       </div>
-
       <div class="section">
         <h2>3. Output Prompt</h2>
         <pre id="json-output">Hasil prompt akan muncul di sini.</pre>
@@ -215,21 +273,21 @@
         <details class="faq-item">
           <summary>Mengapa saya perlu API Key?</summary>
           <div class="faq-content">
-            Aplikasi ini melakukan Panggilan ke Google AI API untuk analisis.
-            API Key diperlukan untuk mengautentikasi permintaan dari lingkungan
-            yang aman seperti AI Studio.
+            Aplikasi ini melakukan Panggilan ke Google AI API untuk analisis. API
+            Key diperlukan untuk mengautentikasi permintaan dari lingkungan yang
+            aman seperti AI Studio.
           </div>
         </details>
       </div>
-    </div>
+      </div>
 
     <script>
       const imageFile = document.getElementById("imageFile");
       const imagePreview = document.getElementById("image-preview");
       const jsonOutput = document.getElementById("json-output");
       const statusMessage = document.getElementById("status-message");
-      const ratioSelect = document.getElementById("ratioSelect");
-      const languageSelect = document.getElementById("languageSelect"); // Elemen Bahasa
+      const ratioSelect = document.getElementById('ratioSelect'); 
+      const languageSelect = document.getElementById('languageSelect');
 
       // Menampilkan pratinjau gambar
       imageFile.addEventListener("change", (event) => {
@@ -252,14 +310,12 @@
 
         const formData = new FormData();
         formData.append("imageFile", file);
-
-        // Ambil nilai opsi yang dipilih
-        const selectedRatio = ratioSelect.value;
-        const selectedLang = languageSelect.value;
-
-        // Tambahkan opsi ke formData untuk backend
+        
+        const selectedRatio = ratioSelect.value; 
+        const selectedLang = languageSelect.value; 
+        
         formData.append("selectedRatio", selectedRatio);
-        formData.append("selectedLang", selectedLang);
+        formData.append("selectedLang", selectedLang); 
 
         statusMessage.textContent = "⏳ Menganalisis Gambar...";
         statusMessage.classList.remove("success");
@@ -276,21 +332,22 @@
           const jsonResult = await response.json();
 
           if (response.ok) {
-            let resultText = "";
-
+            let resultText = '';
+            
             // Tentukan Output berdasarkan mode yang dipilih
-            if (selectedLang.endsWith("-RAW")) {
-              // Mode RAW hanya menampilkan prompt akhir
-              resultText = jsonResult.finalPrompt || jsonResult.message;
+            if (selectedLang.endsWith('-RAW')) {
+                // Mode RAW hanya menampilkan prompt akhir
+                resultText = jsonResult.finalPrompt || jsonResult.message;
             } else {
-              // Mode JSON: Tambahkan rasio dan tampilkan JSON terstruktur
-              jsonResult.rasioOutput = selectedRatio;
-              resultText = JSON.stringify(jsonResult, null, 2);
+                // Mode JSON: Tambahkan rasio dan tampilkan JSON terstruktur
+                jsonResult.rasioOutput = selectedRatio;
+                resultText = JSON.stringify(jsonResult, null, 2);
             }
 
             jsonOutput.textContent = resultText;
             statusMessage.textContent = "✅ Analisis Selesai!";
             statusMessage.classList.add("success");
+
           } else {
             statusMessage.textContent = `❌ Error ${
               jsonResult.code || response.status
@@ -300,14 +357,15 @@
         } catch (error) {
           console.error("Fetch Error:", error);
           statusMessage.textContent =
-            "❌ Error Koneksi: Server tidak merespons. Cek konsol backend.";
+            "❌ Error Koneksi: Server tidak merespons.";
           jsonOutput.textContent = "Gagal menghasilkan prompt.";
         }
       }
 
       function copyJson() {
         if (
-          jsonOutput.textContent === "Hasil prompt akan muncul di sini." ||
+          jsonOutput.textContent ===
+            "Hasil prompt akan muncul di sini." ||
           jsonOutput.textContent.startsWith("Lihat status error")
         )
           return;
@@ -325,3 +383,4 @@
     </script>
   </body>
 </html>
+
