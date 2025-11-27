@@ -192,7 +192,7 @@
           </a>
           <a href="https://tiktok.com/@b.a.c._a.n.d" target="_blank">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg"
+              src="https://upload.wikimedia.org/wikipedia/commons/e/e7/TikTok_icon_dark.svg"
               alt="TikTok"
             />
           </a>
@@ -223,7 +223,7 @@
             stroke-linejoin="round"
             class="feather feather-upload-cloud"
           >
-            <polyline points="16 16 12 12 8 16"></polyline>
+            <path d="M16 16l-4-4-4 4"></path>
             <line x1="12" y1="12" x2="12" y2="21"></line>
             <path
               d="M20.88 12.00001A5 5 0 0 0 18 10.00001V9.00001A7 7 0 0 0 4 9.00001A5 5 0 0 0 3.12 12.00001"
@@ -236,7 +236,7 @@
       <img
         id="image-preview"
         alt="Pratinjau Gambar"
-        style="margin-top: 20px; width: 100%; display: none"
+        style="margin-top: 20px; width: 100%; border-radius: 8px; display: none"
       />
 
       <div class="section" style="margin-top: 20px">
@@ -339,7 +339,7 @@
           </div>
         </details>
       </div>
-    </div>
+      </div>
 
     <script>
       const imageFile = document.getElementById("imageFile");
@@ -381,7 +381,8 @@
         statusMessage.classList.remove("success");
         jsonOutput.textContent = "Analisis sedang berlangsung...";
 
-        const API_URL = "/analyze-image";
+        // Path ke Netlify Function (Backend)
+        const API_URL = "/.netlify/functions/analyze-image"; 
 
         try {
           const response = await fetch(API_URL, {
@@ -401,6 +402,12 @@
             } else {
               // Mode JSON: Tambahkan rasio dan tampilkan JSON terstruktur
               jsonResult.rasioOutput = selectedRatio;
+              
+              // Pastikan rasio dimasukkan ke finalPrompt jika ada
+              if (jsonResult.finalPrompt) {
+                  jsonResult.finalPrompt += `, aspect ratio: ${selectedRatio}`;
+              }
+
               resultText = JSON.stringify(jsonResult, null, 2);
             }
 
