@@ -7,9 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@google/genai": "*",
+    "@google/genai": "*", 
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "serverless-http": "^3.2.0"
   }
 }
