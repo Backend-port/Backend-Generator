@@ -95,8 +95,12 @@ app.post('/', upload.fields([
     const jsonOutput = JSON.parse(jsonText);
     res.json(jsonOutput);
 
-  } catch (error) {
+    } catch (error) {
     console.error("Gemini API Error:", error);
+    
+    // TAMBAH BARIS INI: Memastikan Header Content-Type selalu JSON
+    res.setHeader('Content-Type', 'application/json'); 
+    
     res.status(500).json({
       code: 500,
       message: error.message || "Gagal menganalisis gambar. Cek status API Key.",
