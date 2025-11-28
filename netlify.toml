@@ -7,3 +7,6 @@
   # Direktori tempat Serverless Functions Anda berada
   functions = "api"
   
+[functions]
+  # Mengatur batas waktu eksekusi fungsi menjadi 60 detik (Default-nya 10 detik)
+  timeout = 60
