@@ -1,12 +1,21 @@
 # netlify.toml
+
+# --- 1. PENGATURAN BUILD UTAMA ---
 [build]
-  # Perintah instalasi dependensi
+  # Perintah instalasi dependensi (akan menjalankan 'npm install')
   command = "npm install"
-  # Direktori tempat Netlify akan mencari file statis (index.html)
-  publish = "."
-  # Direktori tempat Serverless Functions Anda berada
-  functions = "api"
   
+  # Direktori publikasi (frontend)
+  publish = "."
+  
+  # Direktori Serverless Functions
+  functions = "api"
+
+# --- 2. PENGATURAN FUNGSI (Untuk semua fungsi) ---
 [functions]
-  # Mengatur batas waktu eksekusi fungsi menjadi 60 detik (Default-nya 10 detik)
-  timeout = 60
+  # Batas waktu eksekusi fungsi diatur ke 60 detik
+  # (Ini adalah solusi untuk error 504/koneksi)
+  timeout = 60 
+
+  # Memungkinkan fungsi Anda mengakses variabel lingkungan
+  node_bundler = "esbuild"
