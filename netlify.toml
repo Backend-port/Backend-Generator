@@ -1,11 +1,20 @@
 [build]
-  # Perintah instalasi dependensi (akan menjalankan 'npm install')
   command = "npm install"
-  
-  # Direktori publikasi (frontend)
   publish = "."
-  
-  # Direktori Serverless Functions
   functions = "api"
 
-# Hapus semua bagian [functions] dan pengaturan timeout untuk menghindari error syntax
+# --- Konfigurasi Fungsi (Global) ---
+[functions]
+  # Memaksa Netlify menggunakan bundler yang lebih stabil
+  node_bundler = "zisi"
+  
+  # Batas waktu eksekusi fungsi diatur ke 60 detik (Fix Timeout 504)
+  timeout = 60
+
+  # Secara eksplisit memberitahu Netlify modul mana yang harus dipaketkan
+  external_node_modules = [
+    "express", 
+    "multer",
+    "@google/genai",
+    "serverless-http"
+  ]
